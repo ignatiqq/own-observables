@@ -39,6 +39,11 @@ const fromEvent = (el, event) => {
 const interval = (ms) => (originalObserver) => {
     return new Observable(observer => {
         let interval;
+        // подписываясь, я вызываю originalObserver, который начинает
+        // отдавать поток данных по
+        // ОБСЕРВАБЛЫ ВЫЗЫВАЮТ ДРУГ ДРУГА (СТЕК) ПО ЦЕПОЧКЕ ВНИЗ
+        // КАЖДЫЙ ОБСЕРВАБЛ В ПАЙПЕ БУДЕТ ВЫЗЫВАТЬ ДРУГОЙ ПОДПИСЫВАЯСЬ НА НЕГО 
+        // ПОКА НЕ ДОЙДЕТ ДО ОБСЕРВАБЛА КОТОРЫЙ НАЧНЕТ СЛАТЬ СТРИМ
         const unsubscribe = originalObserver.subscribe({
             next(val) {
                 interval = setInterval(() => {
@@ -129,8 +134,16 @@ const map = (fn) => (originalObsevable) => {
 }
 
 const numbers = [1,2,3,4,5];
+// Observer {subscribe}
 const numbers$ = from(numbers);
-const numbersMultiplyByTen$ = numbers$.pipe(interval(1100), debounceTime(1000))
+// pipe( ((originalObserver) => new Observer())(numers$)  )
+
+        // подписываясь, я вызываю originalObserver, который начинает
+        // отдавать поток данных по
+        // ОБСЕРВАБЛЫ ВЫЗЫВАЮТ ДРУГ ДРУГА (СТЕК) ПО ЦЕПОЧКЕ ВНИЗ
+        // КАЖДЫЙ ОБСЕРВАБЛ В ПАЙПЕ БУДЕТ ВЫЗЫВАТЬ ДРУГОЙ ПОДПИСЫВАЯСЬ НА НЕГО 
+        // ПОКА НЕ ДОЙДЕТ ДО ОБСЕРВАБЛА КОТОРЫЙ НАЧНЕТ СЛАТЬ СТРИМ
+const numbersMultiplyByTen$ = numbers$.pipe(interval(1100))
 numbersMultiplyByTen$.subscribe({
     next(val) {
         console.log({val});
