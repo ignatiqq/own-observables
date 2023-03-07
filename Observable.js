@@ -18,10 +18,10 @@ class Observable {
     subscribe(observer) {
         const subscription = new Subscription();
         const subscriber = new Subscriber(observer, subscription);
-        const unmount = this.initFunc(subscriber);
-        subscription.add(unmount);
+        const unsubscribe = this.initFunc(subscriber);
+        subscription.add(unsubscribe);
 
-        return subscription;
+        return unsubscribe;
     }
 
     /**
